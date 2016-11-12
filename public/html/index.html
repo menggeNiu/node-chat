@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>nnn聊天室beta版</title>
+	<link rel="shortcut icon" href="../img/bear.jpg">
+	<link rel="stylesheet" href="../css/boostrap.css">
+	<link rel="stylesheet" href="../css/reset.css">
+	<link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+	<h2>欢迎来到🐮🐮🐮聊天室 当前在线人数<span>0</span></h2>
+	<div class="wrapper">
+		<div class="content" id="chat">
+			<ul id="chat_conatiner">
+				
+			</ul>
+		</div>
+		<div class="action">
+			<textarea class="message"></textarea>
+			<button class="btn btn-success" id="clear">清屏</button>
+			<button class="btn btn-success" id="send">发送</button>
+		</div>		
+	</div>
+	<div class="nicknamebox">
+		<div class="nicknameinner">
+			<p>来设置一下昵称吧😎😎</p>
+			<input type="text" class="nickname" placeholder="昵称在这里输入哦👼">
+			<input type="button" class="sure" value="GO">
+		</div>
+	</div>
+</body>
+<script src="../../socket.io/socket.io.js"></script>
+<script>
+	var socket = io('http://10.80.13.27:3000/')
+	var btn = document.querySelector('#send');
+	var info = document.querySelector('.message');
+	var ul = document.querySelector('ul');
+	var span = document.querySelector('span');
+	var container = document.querySelector('#chat');
+	var surebtn = document.querySelector('.sure');
+	var nickbox = document.querySelector('.nicknamebox');
+	var nickname = document.querySelector('.nickname');
+	surebtn.onclick=function(){
+		if (nickname.value =='') {
+			alert('来取个昵称吧🌹');
+		}else{
+				nickbox.style.display='none';
+				btn.onclick = function(e){
+					var ev = e||window.event;
+					ev.preventDefault();
+					var msg = info.value;
+					if(msg==''){
+						alert('来说两句嘛！')
+					}
+					else{
+						info.value = '';
+						info.focus();
+						socket.emit('msg',{info:msg});
+					}
+				};
+				document.onkeydown=function(e){
+					var ev=e||window.event;
+					if(ev.keyCode == 13){
+						var msg = info.value;
+					if(msg==''){
+						alert('来说两句嘛！')
+					}
+					else{
+						info.value = '';
+						info.focus();
+						socket.emit('msg',{info:msg});
+						}
+					}
+				}
+			}
+	
+	}
+socket.on('test', function (data) {
+	var num = data.num;
+	var content= data.name;
+	var li = document.createElement('li');
+	li.innerHTML = content;
+	ul.appendChild(li);
+	chat.scrollTop = chat.scrollHeight;
+	span.innerHTML = num;
+});
+
+</script>
+</html>
